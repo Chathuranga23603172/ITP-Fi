@@ -1,0 +1,21 @@
+/* Nav.css */
+ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  padding: 10px 20px;
+  background-color: #282c34;
+  margin: 0;
+}
+
+li h1 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: white;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+li h1:hover {
+  color: #61dafb;
+}
