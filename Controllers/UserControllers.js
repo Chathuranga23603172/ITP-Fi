@@ -21,6 +21,23 @@ const getAllUsers = async(req,res,next) =>{
 //insert data
 const addUsers = async (req,res,next) =>{
     
+    const{name,gmail,age,address} = req.body
+
+    let users;
+
+    try{
+        users = new User({name,gmail,age,address});
+        await users.save();
+    }catch(err){
+        console.log(err);
+    }
+
+    if(!users){
+        return res.status(404).json({message:"unable to add user"});
+    }
+    return res.status(200).json({ users });
+
 }
 
 exports.getAllUsers = getAllUsers;
+exports.addUsers = addUsers;
