@@ -101,7 +101,7 @@ const deleteUser = async(req,res,next) => {
     }
     return res.status(200).json({ user });
 
-}
+};
 
 
 exports.getAllUsers = getAllUsers;
