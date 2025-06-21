@@ -5,8 +5,9 @@ function User(props) {
 
   return (
     <div>
+        <br/>
       <h1>User Display</h1>
-      <br/>
+      
       <h1>ID: {_id}</h1>
       <h1>Name: {name}</h1>
       <h1>Gmail: {gmail}</h1>

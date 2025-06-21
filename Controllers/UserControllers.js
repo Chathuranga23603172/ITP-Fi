@@ -1,22 +1,23 @@
 const { get } = require("mongoose");
 const User = require("../Model/UserModel");
 
-const getAllUsers = async(req,res,next) =>{
+const getAllUsers = async (req, res, next) => {
+  let users;
 
-    let Users;
+  try {
+    users = await User.find();
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error fetching users" });
+  }
 
-    try{
-        Users = await User.find();
-    }catch(err){
-        console.log(err);
-    }
-    //not found
-    if(!Users){
-        return res.status(404).json({message:"User not found"});
-    }
-    //Display all users
-    return res.status(200).json({Users})
+  if (!users || users.length === 0) {
+    return res.status(404).json({ message: "No users found" });
+  }
+
+  return res.status(200).json({ users }); // ✅ lowercase key
 };
+
 
 //insert data
 const addUsers = async (req,res,next) =>{

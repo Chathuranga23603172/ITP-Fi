@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Nav from "../Nav/Nav";
-import axios from "axios";
-import User from "../User/User";
+import axios from 'axios';
+import User from '../User/User';
+import Nav from '../Nav/Nav';
 
 const URL = "http://localhost:5000/users";
 
@@ -10,10 +10,13 @@ const fetchHandler = async () => {
 };
 
 function Users() {
-  const [users, setUsers] = useState();
+  const [users, setUsers] = useState([]); // ✅ FIXED
 
   useEffect(() => {
-    fetchHandler().then((data) => setUsers(data.users));
+    fetchHandler().then((data) => {
+      console.log("Fetched data:", data);
+      setUsers(data.users); // Make sure your backend returns `users`
+    });
   }, []);
 
   return (
@@ -21,15 +24,18 @@ function Users() {
       <Nav />
       <h1>Users Details page</h1>
       <div>
-        {users && users.map((user, i) => (
-          <div key={i}>
-            <User user={user} />
-          </div>
-        ))}
+        {users.length > 0 ? (
+          users.map((user, i) => (
+            <div key={i}>
+              <User user={user} />
+            </div>
+          ))
+        ) : (
+          <p>Loading or no users found.</p>
+        )}
       </div>
     </div>
   );
 }
 
 export default Users;
-
