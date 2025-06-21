@@ -1,93 +1,134 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 
-function UpdateUser() {
-  const [inputs, setInputs] = useState({});
-  const history = useNavigate();
-  const id = useParams().id;
+const URL = "http://localhost:5000/users";
 
+const UpdateUser = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState({
+    name: "",
+    gmail: "",
+    age: "",
+    address: "",
+  });
+
+  // Fetch user data by id when component mounts
   useEffect(() => {
-    const fetchHandler = async () => {
-      await axios
-        .get(`http://localhost:5000/users/${id}`)
-        .then((res) => res.data)
-        .then((data) => setInputs(data.user));
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`${URL}/${id}`);
+        setUser({
+          name: res.data.user.name,
+          gmail: res.data.user.gmail,
+          age: res.data.user.age,
+          address: res.data.user.address,
+        });
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+      }
     };
-    fetchHandler();
+
+    fetchUser();
   }, [id]);
 
-  const sendRequest = async () => {
-    await axios
-      .put(`http://localhost:5000/users/${id}`, {
-        name: String(inputs.name),
-        gmail: String(inputs.gmail),
-        age: Number(inputs.age),
-        address: String(inputs.address),
-      })
-
-      .then((res) => res.data);
-  };
-
+  // Handle form input change
   const handleChange = (e) => {
-    setInputs((prevState) => ({
-      ...prevState,
+    setUser((prevUser) => ({
+      ...prevUser,
       [e.target.name]: e.target.value,
     }));
   };
-  const handleSubmit = (e) => {
+
+  // Submit updated data
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(inputs);
-    sendRequest().then(() => history("/userdetails"));
+
+    try {
+      await axios.put(`${URL}/${id}`, user);
+      alert("User updated successfully!");
+      navigate("/"); // redirect to user list or wherever you want
+    } catch (err) {
+      console.error("Error updating user:", err);
+      alert("Failed to update user.");
+    }
   };
 
   return (
-    <div>
-      <h1>Update User</h1>
-      <div className="form-container">
-      <h1>Add User</h1>
-      <form onSubmit={handleSubmit} className="user-form">
+    <div style={{ padding: "20px", maxWidth: "500px", margin: "auto", fontFamily: "Arial, sans-serif" }}>
+      <h2 style={{ textAlign: "center" }}>Update User</h2>
+      <form onSubmit={handleSubmit}>
+
+        <label>Name:</label>
         <input
           type="text"
           name="name"
+          value={user.name}
           onChange={handleChange}
-          placeholder="Enter Name"
-          value={inputs.name}
           required
+          style={inputStyle}
         />
+
+        <label>Email:</label>
         <input
           type="email"
           name="gmail"
+          value={user.gmail}
           onChange={handleChange}
-          placeholder="Enter Gmail"
-          value={inputs.gmail}
           required
+          style={inputStyle}
         />
 
+        <label>Age:</label>
         <input
           type="number"
           name="age"
+          value={user.age}
           onChange={handleChange}
-          placeholder="Enter Age"
-          value={inputs.age}
           required
+          min="1"
+          style={inputStyle}
         />
 
+        <label>Address:</label>
         <input
           type="text"
           name="address"
+          value={user.address}
           onChange={handleChange}
-          placeholder="Enter Address"
-          value={inputs.address}
           required
+          style={inputStyle}
         />
 
-        <button type="submit">Submit</button>
+        <button type="submit" style={buttonStyle}>
+          Update User
+        </button>
       </form>
-      </div>
     </div>
   );
-}
+};
+
+const inputStyle = {
+  width: "100%",
+  padding: "8px",
+  margin: "6px 0 16px 0",
+  boxSizing: "border-box",
+  borderRadius: "4px",
+  border: "1px solid #ccc",
+  fontSize: "16px",
+};
+
+const buttonStyle = {
+  width: "100%",
+  padding: "10px",
+  backgroundColor: "#007bff",
+  color: "#fff",
+  border: "none",
+  borderRadius: "4px",
+  fontSize: "18px",
+  cursor: "pointer",
+};
 
 export default UpdateUser;
